@@ -1,23 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_graphql_sample/route/route.dart';
+import 'package:flutter_graphql_sample/graphql/__generated__/all_fruits.data.gql.dart';
+import 'package:flutter_graphql_sample/widget/components/form_text_field.dart';
+import 'package:flutter_graphql_sample/widget/pages/fruit_edit_page.dart';
 
-class FruitDetailPage extends StatefulWidget {
+class FruitDetailPage extends StatelessWidget {
   const FruitDetailPage({
     super.key,
+    required this.fruit,
   });
 
-  @override
-  State<FruitDetailPage> createState() => _FruitDetailPageState();
-}
-
-class _FruitDetailPageState extends State<FruitDetailPage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  final GAllFruitsData_allFruits fruit;
 
   @override
   Widget build(BuildContext context) {
@@ -32,25 +24,59 @@ class _FruitDetailPageState extends State<FruitDetailPage> {
                 child: Text('編集'),
               ),
               onTap: () {
-                Navigator.of(context).pushNamed(fruitEditRoute);
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return FruitEditPage(
+                        fruit: fruit,
+                      );
+                    },
+                  ),
+                );
               },
             ),
           ),
         ],
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Text(
-              'フルーツ名',
+          children: <Widget>[
+            _row(
+              labelText: "名前",
+              text: fruit.name ?? "",
             ),
-            Text(
-              '色',
+            _row(
+              labelText: "色",
+              text: fruit.color ?? "",
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _row({
+    required String labelText,
+    required String text,
+  }) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FormLabelComponent(
+          labelText: labelText,
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Text(
+          text,
+        ),
+        const SizedBox(
+          height: 28,
+        ),
+      ],
     );
   }
 }

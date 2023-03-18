@@ -1,24 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_graphql_sample/route/route.dart';
+import 'package:flutter_graphql_sample/graphql/__generated__/all_fruits.data.gql.dart';
+import 'package:flutter_graphql_sample/widget/pages/fluit_detail_page.dart';
 
 class FruitRow extends StatelessWidget {
   const FruitRow({
     super.key,
-    required this.name,
-    required this.color,
+    required this.fruit,
   });
 
-  final String name;
-  final String color;
+  final GAllFruitsData_allFruits fruit;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(name),
-      subtitle: Text("色: $color"),
+      title: Text(fruit.name ?? ""),
+      subtitle: Text(fruit.color ?? ""),
       trailing: const Icon(Icons.arrow_forward_ios),
       onTap: () {
-        Navigator.of(context).pushNamed(fruitDetailRoute);
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) {
+              return FruitDetailPage(
+                fruit: fruit,
+              );
+            },
+          ),
+        );
       },
     );
   }

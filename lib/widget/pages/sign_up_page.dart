@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_graphql_sample/route/route.dart';
 import 'package:flutter_graphql_sample/widget/components/form_text_field.dart';
+import 'package:flutter_graphql_sample/widget/pages/fruit_list_page.dart';
+import 'package:flutter_graphql_sample/widget/pages/sign_in_page.dart';
 
 class SignUpPage extends StatelessWidget {
   const SignUpPage({
@@ -20,7 +21,13 @@ class SignUpPage extends StatelessWidget {
                 child: Text('ログインへ'),
               ),
               onTap: () {
-                Navigator.of(context).pushReplacementNamed(signInRoute);
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return const SignInPage();
+                    },
+                  ),
+                );
               },
             ),
           ),
@@ -41,7 +48,13 @@ class SignUpPage extends StatelessWidget {
               ElevatedButton(
                 child: const Text('登録してログイン'),
                 onPressed: () {
-                  Navigator.of(context).pushReplacementNamed(fruitListRoute);
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) {
+                        return const FruitListPage();
+                      },
+                    ),
+                  );
                 },
               ),
             ],
