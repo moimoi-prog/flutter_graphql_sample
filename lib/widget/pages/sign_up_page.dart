@@ -1,47 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_graphql_sample/route/route.dart';
+import 'package:flutter_graphql_sample/widget/components/form_text_field.dart';
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<SignUpPage> createState() => _SignUpPageState();
-}
-
-class _SignUpPageState extends State<SignUpPage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+class SignUpPage extends StatelessWidget {
+  const SignUpPage({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: const Text("ユーザー登録"),
+        actions: [
+          Center(
+            child: InkWell(
+              child: const Padding(
+                padding: EdgeInsets.all(12.0),
+                child: Text('ログインへ'),
+              ),
+              onTap: () {
+                Navigator.of(context).pushReplacementNamed(signInRoute);
+              },
+            ),
+          ),
+        ],
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const FormTextField(
+                labelText: "ユーザーID",
+              ),
+              const FormTextField(
+                labelText: "パスワード",
+              ),
+              ElevatedButton(
+                child: const Text('登録してログイン'),
+                onPressed: () {
+                  Navigator.of(context).pushReplacementNamed(fruitListRoute);
+                },
+              ),
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }

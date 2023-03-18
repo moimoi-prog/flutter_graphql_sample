@@ -1,47 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_graphql_sample/widget/components/form_text_field.dart';
 
-class FruitEditPage extends StatefulWidget {
-  const FruitEditPage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<FruitEditPage> createState() => _FruitEditPageState();
-}
-
-class _FruitEditPageState extends State<FruitEditPage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+class FruitEditPage extends StatelessWidget {
+  const FruitEditPage({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: const Text("編集"),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const FormTextField(
+                labelText: "フルーツ名",
+              ),
+              const FormTextField(
+                labelText: "色",
+              ),
+              ElevatedButton(
+                child: const Text('保存'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }

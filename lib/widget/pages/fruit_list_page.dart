@@ -1,47 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_graphql_sample/widget/components/fruit_row.dart';
 
-class FruitListPage extends StatefulWidget {
-  const FruitListPage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<FruitListPage> createState() => _FruitListPageState();
-}
-
-class _FruitListPageState extends State<FruitListPage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+class FruitListPage extends StatelessWidget {
+  const FruitListPage({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: const Text("フルーツ一覧"),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      body: ListView(
+        children: List.generate(
+          3,
+          (index) => FruitRow(
+            name: 'フルーツ$index',
+            color: "色$index",
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }

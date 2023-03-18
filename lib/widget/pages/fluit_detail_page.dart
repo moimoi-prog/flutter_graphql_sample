@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_graphql_sample/route/route.dart';
 
 class FruitDetailPage extends StatefulWidget {
-  const FruitDetailPage({super.key, required this.title});
-
-  final String title;
+  const FruitDetailPage({
+    super.key,
+  });
 
   @override
   State<FruitDetailPage> createState() => _FruitDetailPageState();
@@ -22,26 +23,33 @@ class _FruitDetailPageState extends State<FruitDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: const Text("フルーツ詳細"),
+        actions: [
+          Center(
+            child: InkWell(
+              child: const Padding(
+                padding: EdgeInsets.all(12.0),
+                child: Text('編集'),
+              ),
+              onTap: () {
+                Navigator.of(context).pushNamed(fruitEditRoute);
+              },
+            ),
+          ),
+        ],
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+          children: const <Widget>[
+            Text(
+              'フルーツ名',
             ),
             Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              '色',
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
