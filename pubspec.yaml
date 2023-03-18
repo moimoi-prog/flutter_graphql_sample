@@ -15,6 +15,10 @@ dependencies:
   ferry_flutter: ^0.8.0+1 # 追加
   ferry: ^0.14.0+1 # 追加
 
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  ferry_hive_store: ^0.5.1
+
   flutter_secure_storage: ^8.0.0 # 追加
 
   cupertino_icons: ^1.0.2
