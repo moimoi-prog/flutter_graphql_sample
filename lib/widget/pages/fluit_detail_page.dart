@@ -1,15 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_graphql_sample/graphql/__generated__/all_fruits.data.gql.dart';
+import 'package:flutter_graphql_sample/data/fruit.dart';
 import 'package:flutter_graphql_sample/widget/components/form_text_field.dart';
 import 'package:flutter_graphql_sample/widget/pages/fruit_edit_page.dart';
 
-class FruitDetailPage extends StatelessWidget {
+class FruitDetailPage extends StatefulWidget {
   const FruitDetailPage({
     super.key,
     required this.fruit,
   });
 
-  final GAllFruitsData_allFruits fruit;
+  final Fruit fruit;
+
+  @override
+  State<FruitDetailPage> createState() => _FruitDetailPageState();
+}
+
+class _FruitDetailPageState extends State<FruitDetailPage> {
+  late Fruit _fruit;
+
+  @override
+  void initState() {
+    super.initState();
+    _fruit = widget.fruit;
+  }
+
+  void _update(Fruit fruit) {
+    setState(() {
+      _fruit = fruit;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,16 +42,20 @@ class FruitDetailPage extends StatelessWidget {
                 padding: EdgeInsets.all(12.0),
                 child: Text('編集'),
               ),
-              onTap: () {
-                Navigator.of(context).push(
+              onTap: () async {
+                Fruit? result = await Navigator.of(context).push(
                   MaterialPageRoute<void>(
                     builder: (BuildContext context) {
                       return FruitEditPage(
-                        fruit: fruit,
+                        fruit: _fruit,
                       );
                     },
                   ),
-                );
+                ) as Fruit?;
+
+                if (result != null) {
+                  _update(result);
+                }
               },
             ),
           ),
@@ -44,11 +67,11 @@ class FruitDetailPage extends StatelessWidget {
           children: <Widget>[
             _row(
               labelText: "名前",
-              text: fruit.name ?? "",
+              text: _fruit.name,
             ),
             _row(
               labelText: "色",
-              text: fruit.color ?? "",
+              text: _fruit.color,
             ),
           ],
         ),

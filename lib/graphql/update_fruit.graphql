@@ -1,0 +1,10 @@
+mutation UpdateFruit($id: ID!, $name: String!, $color: String!) {
+  updateFruit(id: $id, name: $name, color: $color) {
+    fruit {
+      id
+      name
+      color
+      created
+    }
+  }
+}

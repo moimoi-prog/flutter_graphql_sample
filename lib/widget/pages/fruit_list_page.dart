@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_graphql_sample/graphql/__generated__/all_fruits.data.gql.dart';
+import 'package:flutter_graphql_sample/data/fruit.dart';
 import 'package:flutter_graphql_sample/main.dart';
 import 'package:flutter_graphql_sample/widget/components/fruit_row.dart';
 import 'package:flutter_graphql_sample/widget/pages/fruit_edit_page.dart';
@@ -15,7 +15,7 @@ class FruitListPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("フルーツ一覧"),
       ),
-      body: FutureBuilder<GAllFruitsData>(
+      body: FutureBuilder<List<Fruit>>(
         future: client.listenAllFruits(),
         builder: (context, snapshot) {
           if (!snapshot.hasData ||
@@ -25,16 +25,16 @@ class FruitListPage extends StatelessWidget {
             );
           }
 
-          if (snapshot.data!.allFruits == null) {
+          if (snapshot.data == null) {
             return const Center(
               child: Text('フルーツが登録されていません'),
             );
           }
 
           return ListView.builder(
-            itemCount: snapshot.data!.allFruits!.length,
+            itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
-              final fruit = snapshot.data!.allFruits![index]!;
+              final fruit = snapshot.data![index];
 
               return FruitRow(
                 fruit: fruit,
