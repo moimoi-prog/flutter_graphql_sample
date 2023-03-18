@@ -1,0 +1,8 @@
+query AllFruits{
+  allFruits {
+    id
+    name
+    color
+    created
+  }
+}

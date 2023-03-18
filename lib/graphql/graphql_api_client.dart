@@ -1,4 +1,9 @@
+import 'dart:async';
+
 import 'package:ferry/ferry.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_graphql_sample/graphql/__generated__/all_fruits.data.gql.dart';
+import 'package:flutter_graphql_sample/graphql/__generated__/all_fruits.req.gql.dart';
 import 'package:gql_http_link/gql_http_link.dart';
 
 class GraphQlAPIClient {
@@ -13,5 +18,21 @@ class GraphQlAPIClient {
       link: link,
       cache: cache,
     );
+  }
+
+  Future<GAllFruitsData> listenAllFruits() async {
+    final tCompleter = Completer<GAllFruitsData>();
+
+    final request = GAllFruitsReq();
+    _client.request(request).listen((event) {
+      final data = event.data;
+      if (data != null) {
+        return tCompleter.complete(data);
+      } else {
+        debugPrint(event.linkException!.originalException.toString());
+      }
+    });
+
+    return tCompleter.future;
   }
 }
