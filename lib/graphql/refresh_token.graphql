@@ -1,8 +1,7 @@
 mutation RefreshToken($refreshToken: String!) {
   refreshToken(refreshToken: $refreshToken) {
-    payload
-    refreshExpiresIn
     token
     refreshToken
+    refreshExpiresIn
   }
 }

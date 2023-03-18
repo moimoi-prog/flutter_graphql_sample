@@ -81,7 +81,7 @@ class GraphQlAPIClient {
           ..fetchPolicy = FetchPolicy.NetworkOnly,
       );
 
-      _client.request(tokenAuthReq).listen(
+      _client.request(tokenAuthReq).first.then(
         (event) {
           if (event.hasErrors) {
             throw Exception(event.graphqlErrors);

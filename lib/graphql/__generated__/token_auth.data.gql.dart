@@ -4,8 +4,6 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
-import 'package:flutter_graphql_sample/graphql/__generated__/schema.schema.gql.dart'
-    as _i2;
 import 'package:flutter_graphql_sample/graphql/__generated__/serializers.gql.dart'
     as _i1;
 
@@ -49,10 +47,9 @@ abstract class GTokenAuthData_tokenAuth
       b..G__typename = 'ObtainJSONWebToken';
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
-  _i2.GGenericScalar get payload;
-  int get refreshExpiresIn;
   String get token;
   String get refreshToken;
+  int get refreshExpiresIn;
   static Serializer<GTokenAuthData_tokenAuth> get serializer =>
       _$gTokenAuthDataTokenAuthSerializer;
   Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(

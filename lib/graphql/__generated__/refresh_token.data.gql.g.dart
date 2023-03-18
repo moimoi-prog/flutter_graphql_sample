@@ -85,18 +85,15 @@ class _$GRefreshTokenData_refreshTokenSerializer
       '__typename',
       serializers.serialize(object.G__typename,
           specifiedType: const FullType(String)),
-      'payload',
-      serializers.serialize(object.payload,
-          specifiedType: const FullType(_i2.GGenericScalar)),
-      'refreshExpiresIn',
-      serializers.serialize(object.refreshExpiresIn,
-          specifiedType: const FullType(int)),
       'token',
       serializers.serialize(object.token,
           specifiedType: const FullType(String)),
       'refreshToken',
       serializers.serialize(object.refreshToken,
           specifiedType: const FullType(String)),
+      'refreshExpiresIn',
+      serializers.serialize(object.refreshExpiresIn,
+          specifiedType: const FullType(int)),
     ];
 
     return result;
@@ -118,15 +115,6 @@ class _$GRefreshTokenData_refreshTokenSerializer
           result.G__typename = serializers.deserialize(value,
               specifiedType: const FullType(String))! as String;
           break;
-        case 'payload':
-          result.payload.replace(serializers.deserialize(value,
-                  specifiedType: const FullType(_i2.GGenericScalar))!
-              as _i2.GGenericScalar);
-          break;
-        case 'refreshExpiresIn':
-          result.refreshExpiresIn = serializers.deserialize(value,
-              specifiedType: const FullType(int))! as int;
-          break;
         case 'token':
           result.token = serializers.deserialize(value,
               specifiedType: const FullType(String))! as String;
@@ -134,6 +122,10 @@ class _$GRefreshTokenData_refreshTokenSerializer
         case 'refreshToken':
           result.refreshToken = serializers.deserialize(value,
               specifiedType: const FullType(String))! as String;
+          break;
+        case 'refreshExpiresIn':
+          result.refreshExpiresIn = serializers.deserialize(value,
+              specifiedType: const FullType(int))! as int;
           break;
       }
     }
@@ -262,13 +254,11 @@ class _$GRefreshTokenData_refreshToken extends GRefreshTokenData_refreshToken {
   @override
   final String G__typename;
   @override
-  final _i2.GGenericScalar payload;
-  @override
-  final int refreshExpiresIn;
-  @override
   final String token;
   @override
   final String refreshToken;
+  @override
+  final int refreshExpiresIn;
 
   factory _$GRefreshTokenData_refreshToken(
           [void Function(GRefreshTokenData_refreshTokenBuilder)? updates]) =>
@@ -276,21 +266,18 @@ class _$GRefreshTokenData_refreshToken extends GRefreshTokenData_refreshToken {
 
   _$GRefreshTokenData_refreshToken._(
       {required this.G__typename,
-      required this.payload,
-      required this.refreshExpiresIn,
       required this.token,
-      required this.refreshToken})
+      required this.refreshToken,
+      required this.refreshExpiresIn})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
         G__typename, r'GRefreshTokenData_refreshToken', 'G__typename');
     BuiltValueNullFieldError.checkNotNull(
-        payload, r'GRefreshTokenData_refreshToken', 'payload');
-    BuiltValueNullFieldError.checkNotNull(refreshExpiresIn,
-        r'GRefreshTokenData_refreshToken', 'refreshExpiresIn');
-    BuiltValueNullFieldError.checkNotNull(
         token, r'GRefreshTokenData_refreshToken', 'token');
     BuiltValueNullFieldError.checkNotNull(
         refreshToken, r'GRefreshTokenData_refreshToken', 'refreshToken');
+    BuiltValueNullFieldError.checkNotNull(refreshExpiresIn,
+        r'GRefreshTokenData_refreshToken', 'refreshExpiresIn');
   }
 
   @override
@@ -307,20 +294,18 @@ class _$GRefreshTokenData_refreshToken extends GRefreshTokenData_refreshToken {
     if (identical(other, this)) return true;
     return other is GRefreshTokenData_refreshToken &&
         G__typename == other.G__typename &&
-        payload == other.payload &&
-        refreshExpiresIn == other.refreshExpiresIn &&
         token == other.token &&
-        refreshToken == other.refreshToken;
+        refreshToken == other.refreshToken &&
+        refreshExpiresIn == other.refreshExpiresIn;
   }
 
   @override
   int get hashCode {
     var _$hash = 0;
     _$hash = $jc(_$hash, G__typename.hashCode);
-    _$hash = $jc(_$hash, payload.hashCode);
-    _$hash = $jc(_$hash, refreshExpiresIn.hashCode);
     _$hash = $jc(_$hash, token.hashCode);
     _$hash = $jc(_$hash, refreshToken.hashCode);
+    _$hash = $jc(_$hash, refreshExpiresIn.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -329,10 +314,9 @@ class _$GRefreshTokenData_refreshToken extends GRefreshTokenData_refreshToken {
   String toString() {
     return (newBuiltValueToStringHelper(r'GRefreshTokenData_refreshToken')
           ..add('G__typename', G__typename)
-          ..add('payload', payload)
-          ..add('refreshExpiresIn', refreshExpiresIn)
           ..add('token', token)
-          ..add('refreshToken', refreshToken))
+          ..add('refreshToken', refreshToken)
+          ..add('refreshExpiresIn', refreshExpiresIn))
         .toString();
   }
 }
@@ -347,16 +331,6 @@ class GRefreshTokenData_refreshTokenBuilder
   String? get G__typename => _$this._G__typename;
   set G__typename(String? G__typename) => _$this._G__typename = G__typename;
 
-  _i2.GGenericScalarBuilder? _payload;
-  _i2.GGenericScalarBuilder get payload =>
-      _$this._payload ??= new _i2.GGenericScalarBuilder();
-  set payload(_i2.GGenericScalarBuilder? payload) => _$this._payload = payload;
-
-  int? _refreshExpiresIn;
-  int? get refreshExpiresIn => _$this._refreshExpiresIn;
-  set refreshExpiresIn(int? refreshExpiresIn) =>
-      _$this._refreshExpiresIn = refreshExpiresIn;
-
   String? _token;
   String? get token => _$this._token;
   set token(String? token) => _$this._token = token;
@@ -364,6 +338,11 @@ class GRefreshTokenData_refreshTokenBuilder
   String? _refreshToken;
   String? get refreshToken => _$this._refreshToken;
   set refreshToken(String? refreshToken) => _$this._refreshToken = refreshToken;
+
+  int? _refreshExpiresIn;
+  int? get refreshExpiresIn => _$this._refreshExpiresIn;
+  set refreshExpiresIn(int? refreshExpiresIn) =>
+      _$this._refreshExpiresIn = refreshExpiresIn;
 
   GRefreshTokenData_refreshTokenBuilder() {
     GRefreshTokenData_refreshToken._initializeBuilder(this);
@@ -373,10 +352,9 @@ class GRefreshTokenData_refreshTokenBuilder
     final $v = _$v;
     if ($v != null) {
       _G__typename = $v.G__typename;
-      _payload = $v.payload.toBuilder();
-      _refreshExpiresIn = $v.refreshExpiresIn;
       _token = $v.token;
       _refreshToken = $v.refreshToken;
+      _refreshExpiresIn = $v.refreshExpiresIn;
       _$v = null;
     }
     return this;
@@ -397,32 +375,18 @@ class GRefreshTokenData_refreshTokenBuilder
   GRefreshTokenData_refreshToken build() => _build();
 
   _$GRefreshTokenData_refreshToken _build() {
-    _$GRefreshTokenData_refreshToken _$result;
-    try {
-      _$result = _$v ??
-          new _$GRefreshTokenData_refreshToken._(
-              G__typename: BuiltValueNullFieldError.checkNotNull(G__typename,
-                  r'GRefreshTokenData_refreshToken', 'G__typename'),
-              payload: payload.build(),
-              refreshExpiresIn: BuiltValueNullFieldError.checkNotNull(
-                  refreshExpiresIn,
-                  r'GRefreshTokenData_refreshToken',
-                  'refreshExpiresIn'),
-              token: BuiltValueNullFieldError.checkNotNull(
-                  token, r'GRefreshTokenData_refreshToken', 'token'),
-              refreshToken: BuiltValueNullFieldError.checkNotNull(refreshToken,
-                  r'GRefreshTokenData_refreshToken', 'refreshToken'));
-    } catch (_) {
-      late String _$failedField;
-      try {
-        _$failedField = 'payload';
-        payload.build();
-      } catch (e) {
-        throw new BuiltValueNestedFieldError(
-            r'GRefreshTokenData_refreshToken', _$failedField, e.toString());
-      }
-      rethrow;
-    }
+    final _$result = _$v ??
+        new _$GRefreshTokenData_refreshToken._(
+            G__typename: BuiltValueNullFieldError.checkNotNull(
+                G__typename, r'GRefreshTokenData_refreshToken', 'G__typename'),
+            token: BuiltValueNullFieldError.checkNotNull(
+                token, r'GRefreshTokenData_refreshToken', 'token'),
+            refreshToken: BuiltValueNullFieldError.checkNotNull(refreshToken,
+                r'GRefreshTokenData_refreshToken', 'refreshToken'),
+            refreshExpiresIn: BuiltValueNullFieldError.checkNotNull(
+                refreshExpiresIn,
+                r'GRefreshTokenData_refreshToken',
+                'refreshExpiresIn'));
     replace(_$result);
     return _$result;
   }

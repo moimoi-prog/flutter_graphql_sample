@@ -118,6 +118,7 @@ class FormTextField extends StatelessWidget {
           },
           maxLines: keyboardType == TextInputType.multiline ? null : 1,
           textInputAction: TextInputAction.next,
+          obscureText: obscureText,
         ),
         const SizedBox(
           height: 28,
