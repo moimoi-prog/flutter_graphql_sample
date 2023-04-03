@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_graphql_sample/main.dart';
-import 'package:flutter_graphql_sample/resources/strings.dart';
+import 'package:flutter_graphql_sample/session_utils.dart';
 import 'package:flutter_graphql_sample/widget/pages/fruit_list_page.dart';
+import 'package:flutter_graphql_sample/widget/pages/sign_in_page.dart';
 import 'package:flutter_graphql_sample/widget/pages/sign_up_page.dart';
 
 enum NextRoute {
   signUp,
-
+  signIn,
   fruitList,
 }
 
@@ -15,22 +15,11 @@ class InitialPage extends StatelessWidget {
     super.key,
   });
 
-  Future<NextRoute> bootstrap() async {
-    // tokenが存在する場合ログイン済みとする
-    bool isLogined = await storage.containsKey(key: tokenKey);
-
-    if (isLogined) {
-      return NextRoute.fruitList;
-    } else {
-      return NextRoute.signUp;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) async {
-        bootstrap().then(
+        SessionUtils.bootstrap().then(
           (value) {
             switch (value) {
               case NextRoute.signUp:
@@ -38,6 +27,15 @@ class InitialPage extends StatelessWidget {
                   MaterialPageRoute<void>(
                     builder: (BuildContext context) {
                       return const SignUpPage();
+                    },
+                  ),
+                );
+                break;
+              case NextRoute.signIn:
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return const SignInPage();
                     },
                   ),
                 );

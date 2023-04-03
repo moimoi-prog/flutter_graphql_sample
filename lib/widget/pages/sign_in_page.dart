@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_graphql_sample/session_utils.dart';
 import 'package:flutter_graphql_sample/widget/components/form_text_field.dart';
 import 'package:flutter_graphql_sample/widget/pages/fruit_list_page.dart';
 import 'package:flutter_graphql_sample/widget/pages/sign_up_page.dart';
@@ -14,25 +15,19 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   late TextEditingController _usernameController;
-  late TextEditingController _emailController;
-  late TextEditingController _password1Controller;
-  late TextEditingController _password2Controller;
+  late TextEditingController _passwordController;
 
   @override
   void initState() {
     super.initState();
     _usernameController = TextEditingController();
-    _emailController = TextEditingController();
-    _password1Controller = TextEditingController();
-    _password2Controller = TextEditingController();
+    _passwordController = TextEditingController();
   }
 
   @override
   void dispose() {
     _usernameController.dispose();
-    _emailController.dispose();
-    _password1Controller.dispose();
-    _password2Controller.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -67,22 +62,30 @@ class _SignInPageState extends State<SignInPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const FormTextField(
+              FormTextField(
                 labelText: "ユーザーID",
+                controller: _usernameController,
               ),
-              const FormTextField(
+              FormTextField(
                 labelText: "パスワード",
+                controller: _passwordController,
+                obscureText: true,
               ),
               ElevatedButton(
                 child: const Text('ログイン'),
                 onPressed: () async {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) {
-                        return const FruitListPage();
-                      },
-                    ),
-                  );
+                  SessionUtils.signIn(
+                    username: _usernameController.text,
+                    password: _passwordController.text,
+                  ).then((value) {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) {
+                          return const FruitListPage();
+                        },
+                      ),
+                    );
+                  });
                 },
               ),
             ],

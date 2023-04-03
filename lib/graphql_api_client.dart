@@ -1,6 +1,11 @@
 import 'dart:async';
 
 import 'package:ferry/ferry.dart';
+import 'package:ferry/src/add_typename_typed_link.dart';
+import 'package:ferry/src/error_typed_link.dart';
+import 'package:ferry/src/fetch_policy_typed_link.dart';
+import 'package:ferry/src/request_controller_typed_link.dart';
+import 'package:ferry/src/update_cache_typed_link.dart';
 import 'package:flutter_graphql_sample/data/fruit.dart';
 import 'package:flutter_graphql_sample/graphql/__generated__/all_fruits.req.gql.dart';
 import 'package:flutter_graphql_sample/graphql/__generated__/create_fruit.req.gql.dart';
@@ -13,178 +18,233 @@ import 'package:flutter_graphql_sample/graphql/__generated__/revoke_token.req.gq
 import 'package:flutter_graphql_sample/graphql/__generated__/token_auth.data.gql.dart';
 import 'package:flutter_graphql_sample/graphql/__generated__/token_auth.req.gql.dart';
 import 'package:flutter_graphql_sample/graphql/__generated__/update_fruit.req.gql.dart';
+import 'package:flutter_graphql_sample/session_utils.dart';
+import 'package:gql_exec/gql_exec.dart';
 import 'package:gql_http_link/gql_http_link.dart';
 
+export 'package:ferry/src/update_cache_typed_link.dart' show UpdateCacheHandler;
+export 'package:ferry_cache/ferry_cache.dart';
+export 'package:ferry_exec/ferry_exec.dart';
+export 'package:gql/ast.dart' show OperationType;
+export 'package:gql_link/gql_link.dart';
+export 'package:normalize/policies.dart';
+
+const endpoint = 'http://localhost:8000/graphql/';
+
+class GraphQLResponse<T> {
+  GraphQLResponse({
+    required this.success,
+    this.exceptions,
+    this.data,
+  });
+
+  final bool success;
+  final List<GraphQLError>? exceptions;
+  final T? data;
+
+  factory GraphQLResponse.create(event) {
+    late GraphQLResponse<T> response;
+
+    if (event.hasErrors) {
+      response = GraphQLResponse<T>(
+        success: false,
+        exceptions: event.graphqlErrors,
+      );
+    }
+
+    response = GraphQLResponse<T>(
+      success: true,
+      data: event.data,
+    );
+    return response;
+  }
+}
+
+class HttpAuthClient extends Client {
+  HttpAuthClient({
+    required super.link,
+    super.cache,
+  });
+
+  late TypedLink _typedLink;
+
+  @override
+  Stream<OperationResponse<TData, TVars>> request<TData, TVars>(
+    OperationRequest<TData, TVars> request, [
+    forward,
+  ]) async* {
+    final Map<String, String> defaultHeaders = {};
+    final String? token = await SessionUtils.checkToken();
+
+    if (token != null) {
+      defaultHeaders["Authorization"] = "JWT $token";
+    }
+
+    Link link = HttpLink(
+      endpoint,
+      defaultHeaders: defaultHeaders,
+    );
+
+    _typedLink = TypedLink.from([
+      const ErrorTypedLink(),
+      RequestControllerTypedLink(requestController),
+      if (addTypename) const AddTypenameTypedLink(),
+      if (updateCacheHandlers.isNotEmpty)
+        UpdateCacheTypedLink(
+          cache: cache,
+          updateCacheHandlers: updateCacheHandlers,
+        ),
+      FetchPolicyTypedLink(
+        link: link,
+        cache: cache,
+        defaultFetchPolicies: defaultFetchPolicies,
+      )
+    ]);
+
+    yield* _typedLink.request(request, forward);
+  }
+}
+
 class GraphQlAPIClient {
+  late final HttpLink _link;
   late final Client _client;
+  late final HttpAuthClient _authClient;
 
   GraphQlAPIClient(Cache cache) {
-    final link = HttpLink(
-      'http://localhost:8000/graphql/',
+    _link = HttpLink(
+      endpoint,
     );
 
     _client = Client(
-      link: link,
+      link: _link,
+      cache: cache,
+    );
+
+    _authClient = HttpAuthClient(
+      link: _link,
       cache: cache,
     );
   }
 
+  Future<GraphQLResponse<TData>> _future<TData, TVars>(
+    OperationRequest<TData, TVars> request,
+  ) async {
+    return _authClient
+        .request(request)
+        .firstWhere((element) => !element.loading)
+        .then((event) {
+      final GraphQLResponse<TData> result =
+          GraphQLResponse<TData>.create(event);
+
+      return result;
+    });
+  }
+
   /// ユーザー登録
-  Future<GCreateUserData> createUser({
+  Future<GraphQLResponse<GCreateUserData>> createUser({
     required String email,
     required String username,
     required String password1,
     required String password2,
-  }) {
+  }) async {
     try {
-      final tCompleter = Completer<GCreateUserData>();
-
-      final createUserReq = GCreateUserReq(
+      final request = GCreateUserReq(
         (b) => b
           ..vars.email = email
           ..vars.username = username
           ..vars.password1 = password1
           ..vars.password2 = password2
-          ..fetchPolicy = FetchPolicy.NetworkOnly,
+          ..fetchPolicy = FetchPolicy.NoCache,
       );
 
-      _client.request(createUserReq).listen(
-        (event) {
-          if (event.hasErrors) {
-            throw Exception(event.graphqlErrors);
-          }
+      final result = await _future(request);
 
-          return tCompleter.complete(
-            event.data,
-          );
-        },
-      );
-
-      return tCompleter.future;
+      return result;
     } catch (e) {
-      throw Exception(e);
+      rethrow;
     }
   }
 
   /// トークン認証
-  Future<GTokenAuthData> tokenAuth({
+  Future<GraphQLResponse<GTokenAuthData>> tokenAuth({
     required String username,
     required String password,
-  }) {
+  }) async {
     try {
-      final tCompleter = Completer<GTokenAuthData>();
-
-      final tokenAuthReq = GTokenAuthReq(
+      final request = GTokenAuthReq(
         (b) => b
           ..vars.username = username
           ..vars.password = password
-          ..fetchPolicy = FetchPolicy.NetworkOnly,
+          ..fetchPolicy = FetchPolicy.NoCache,
       );
 
-      _client.request(tokenAuthReq).first.then(
-        (event) {
-          if (event.hasErrors) {
-            throw Exception(event.graphqlErrors);
-          }
+      final result = await _future(request);
 
-          return tCompleter.complete(
-            event.data,
-          );
-        },
-      );
-
-      return tCompleter.future;
+      return result;
     } catch (e) {
       throw Exception(e);
     }
   }
 
   /// トークン再生成
-  Future<GRefreshTokenData> refreshToken({
+  Future<GraphQLResponse<GRefreshTokenData>> refreshToken({
     required String refreshToken,
-  }) {
+  }) async {
     try {
-      final tCompleter = Completer<GRefreshTokenData>();
-
-      final refreshTokenReq = GRefreshTokenReq(
+      final request = GRefreshTokenReq(
         (b) => b
           ..vars.refreshToken = refreshToken
-          ..fetchPolicy = FetchPolicy.NetworkOnly,
+          ..fetchPolicy = FetchPolicy.NoCache,
       );
 
-      _client.request(refreshTokenReq).listen(
-        (event) {
-          if (event.hasErrors) {
-            throw Exception(event.graphqlErrors);
-          }
+      final result = await _future(request);
 
-          return tCompleter.complete(
-            event.data,
-          );
-        },
-      );
-
-      return tCompleter.future;
+      return result;
     } catch (e) {
       throw Exception(e);
     }
   }
 
   /// リフレッシュトークン無効化
-  Future<GRevokeTokenData> revokeToken({
+  Future<GraphQLResponse<GRevokeTokenData>> revokeToken({
     required String refreshToken,
-  }) {
+  }) async {
     try {
-      final tCompleter = Completer<GRevokeTokenData>();
-
-      final revokeTokenReq = GRevokeTokenReq(
+      final request = GRevokeTokenReq(
         (b) => b
           ..vars.refreshToken = refreshToken
-          ..fetchPolicy = FetchPolicy.NetworkOnly,
+          ..fetchPolicy = FetchPolicy.NoCache,
       );
 
-      _client.request(revokeTokenReq).listen(
-        (event) {
-          if (event.hasErrors) {
-            throw Exception(event.graphqlErrors);
-          }
+      final result = await _future(request);
 
-          return tCompleter.complete(
-            event.data,
-          );
-        },
-      );
-
-      return tCompleter.future;
+      return result;
     } catch (e) {
       throw Exception(e);
     }
   }
 
-  Future<List<Fruit>> listenAllFruits() async {
+  Future<List<Fruit>> allFruits() async {
     try {
-      final tCompleter = Completer<List<Fruit>>();
-
-      final request = GAllFruitsReq();
-      _client.request(request).listen(
-        (event) {
-          if (event.hasErrors) {
-            throw Exception(event.graphqlErrors);
-          }
-
-          return tCompleter.complete(event.data!.allFruits!
-              .map((p0) => Fruit(
-                    id: p0?.id ?? "",
-                    name: p0?.name ?? "",
-                    color: p0?.color ?? "",
-                  ))
-              .toList());
-        },
+      final request = GAllFruitsReq(
+        (b) => b..fetchPolicy = FetchPolicy.NoCache,
       );
 
-      return tCompleter.future;
+      final result = await _future(request);
+
+      if (!result.success) {
+        throw Exception(result.exceptions);
+      }
+
+      return result.data!.allFruits!
+          .map((p0) => Fruit(
+                id: p0?.id ?? "",
+                name: p0?.name ?? "",
+                color: p0?.color ?? "",
+              ))
+          .toList();
     } catch (e) {
-      throw Exception(e);
+      rethrow;
     }
   }
 
@@ -193,31 +253,23 @@ class GraphQlAPIClient {
     required String color,
   }) async {
     try {
-      final tCompleter = Completer<Fruit>();
-
-      final createFruitReq = GCreateFruitReq(
+      final request = GCreateFruitReq(
         (b) => b
           ..vars.name = name
           ..vars.color = color,
       );
 
-      _client.request(createFruitReq).listen(
-        (event) {
-          if (event.hasErrors) {
-            throw Exception(event.graphqlErrors);
-          }
+      final result = await _future(request);
 
-          return tCompleter.complete(
-            Fruit(
-              id: event.data?.createFruit?.fruit?.id ?? "",
-              name: event.data?.createFruit?.fruit?.name ?? "",
-              color: event.data?.createFruit?.fruit?.color ?? "",
-            ),
-          );
-        },
+      if (!result.success) {
+        throw Exception(result.exceptions);
+      }
+
+      return Fruit(
+        id: result.data?.createFruit?.fruit?.id ?? "",
+        name: result.data?.createFruit?.fruit?.name ?? "",
+        color: result.data?.createFruit?.fruit?.color ?? "",
       );
-
-      return tCompleter.future;
     } catch (e) {
       throw Exception(e);
     }
@@ -229,32 +281,24 @@ class GraphQlAPIClient {
     required String color,
   }) async {
     try {
-      final tCompleter = Completer<Fruit>();
-
-      final updateFruitReq = GUpdateFruitReq(
+      final request = GUpdateFruitReq(
         (b) => b
           ..vars.id = id
           ..vars.name = name
           ..vars.color = color,
       );
 
-      _client.request(updateFruitReq).listen(
-        (event) {
-          if (event.hasErrors) {
-            throw Exception(event.graphqlErrors);
-          }
+      final result = await _future(request);
 
-          return tCompleter.complete(
-            Fruit(
-              id: event.data?.updateFruit?.fruit?.id ?? "",
-              name: event.data?.updateFruit?.fruit?.name ?? "",
-              color: event.data?.updateFruit?.fruit?.color ?? "",
-            ),
-          );
-        },
+      if (!result.success) {
+        throw Exception(result.exceptions);
+      }
+
+      return Fruit(
+        id: result.data?.updateFruit?.fruit?.id ?? "",
+        name: result.data?.updateFruit?.fruit?.name ?? "",
+        color: result.data?.updateFruit?.fruit?.color ?? "",
       );
-
-      return tCompleter.future;
     } catch (e) {
       throw Exception(e);
     }

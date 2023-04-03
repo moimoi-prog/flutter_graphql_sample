@@ -16,7 +16,7 @@ class FruitListPage extends StatelessWidget {
         title: const Text("フルーツ一覧"),
       ),
       body: FutureBuilder<List<Fruit>>(
-        future: client.listenAllFruits(),
+        future: client.allFruits(),
         builder: (context, snapshot) {
           if (!snapshot.hasData ||
               snapshot.connectionState != ConnectionState.done) {

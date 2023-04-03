@@ -8,6 +8,13 @@ targets:
           when_extensions:
             when: true
             maybeWhen: true
+          # type_overrides:
+          #   jsonb:
+          #     name: JsonObject
+          #     import: "package:built_value/json_object.dart"
+          # custom_serializers:
+          #   - import: "package:built_value/src/json_object_serializer.dart"
+          #     name: JsonObjectSerializer
       ferry_generator|serializer_builder:
         enabled: true
         options:

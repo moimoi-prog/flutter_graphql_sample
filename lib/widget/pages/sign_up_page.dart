@@ -1,10 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_graphql_sample/graphql/__generated__/create_user.data.gql.dart';
-import 'package:flutter_graphql_sample/graphql/__generated__/token_auth.data.gql.dart';
-import 'package:flutter_graphql_sample/main.dart';
-import 'package:flutter_graphql_sample/resources/strings.dart';
+import 'package:flutter_graphql_sample/session_utils.dart';
 import 'package:flutter_graphql_sample/widget/components/form_text_field.dart';
 import 'package:flutter_graphql_sample/widget/pages/fruit_list_page.dart';
 import 'package:flutter_graphql_sample/widget/pages/sign_in_page.dart';
@@ -53,41 +50,6 @@ class _SignUpPageState extends State<SignUpPage> {
     final codeUnits = List.generate(length,
         (index) => randomChars.codeUnitAt(rand.nextInt(randomChars.length)));
     return String.fromCharCodes(codeUnits);
-  }
-
-  Future<GCreateUserData> signUp() async {
-    try {
-      final GCreateUserData createUserResponse = await client.createUser(
-        email: _emailController.text,
-        username: _usernameController.text,
-        password1: _password1Controller.text,
-        password2: _password2Controller.text,
-      );
-
-      if (createUserResponse.createUser!.success!) {
-        final GTokenAuthData tokenAuthResponse = await client.tokenAuth(
-          username: _usernameController.text,
-          password: _password1Controller.text,
-        );
-
-        storage.write(
-          key: tokenKey,
-          value: tokenAuthResponse.tokenAuth!.token,
-        );
-        storage.write(
-          key: refreshTokenKey,
-          value: tokenAuthResponse.tokenAuth!.refreshToken,
-        );
-        storage.write(
-          key: refreshExpiresInKey,
-          value: tokenAuthResponse.tokenAuth!.refreshExpiresIn.toString(),
-        );
-      }
-
-      return createUserResponse;
-    } catch (e) {
-      throw Exception(e);
-    }
   }
 
   @override
@@ -142,9 +104,14 @@ class _SignUpPageState extends State<SignUpPage> {
               ElevatedButton(
                 child: const Text('登録してログイン'),
                 onPressed: () async {
-                  signUp().then(
-                    (GCreateUserData value) {
-                      if (value.createUser?.success ?? false) {
+                  SessionUtils.signUp(
+                    email: _emailController.text,
+                    username: _usernameController.text,
+                    password1: _password1Controller.text,
+                    password2: _password2Controller.text,
+                  ).then(
+                    (bool success) {
+                      if (success) {
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute<void>(
                             builder: (BuildContext context) {
