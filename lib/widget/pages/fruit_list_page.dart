@@ -16,13 +16,40 @@ class FruitListPage extends StatefulWidget {
   State<FruitListPage> createState() => _FruitListPageState();
 }
 
-class _FruitListPageState extends State<FruitListPage> {
+class _FruitListPageState extends State<FruitListPage> with RouteAware {
   late Future<List<Fruit>> _future;
 
   @override
   void initState() {
     super.initState();
     _future = client.allFruits();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // 遷移時に呼ばれる関数
+    // routeObserverに自身を設定
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    // routeObserverから自身を外す
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    if (!mounted) {
+      return;
+    }
+
+    // 最新の情報に更新
+    setState(() {
+      _future = client.allFruits();
+    });
   }
 
   @override
@@ -97,9 +124,9 @@ class _FruitListPageState extends State<FruitListPage> {
               return;
             }
 
-            setState(() {
-              _future = client.allFruits();
-            });
+            // setState(() {
+            //   _future = client.allFruits();
+            // });
           });
         },
       ),

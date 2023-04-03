@@ -1,4 +1,3 @@
-import 'package:ferry/ferry.dart';
 import 'package:ferry_hive_store/ferry_hive_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_graphql_sample/graphql_api_client.dart';
@@ -9,6 +8,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 // GetItなどでアクセスするようにしたほうが良いかも
 late GraphQlAPIClient client;
 late FlutterSecureStorage storage;
+
+final RouteObserver routeObserver = RouteObserver();
 
 void main() async {
   await Hive.initFlutter();
@@ -36,6 +37,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      navigatorObservers: <NavigatorObserver>[
+        routeObserver,
+      ],
     );
   }
 }
