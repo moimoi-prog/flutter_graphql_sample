@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_graphql_sample/data/fruit.dart';
 import 'package:flutter_graphql_sample/main.dart';
+import 'package:flutter_graphql_sample/session_utils.dart';
+import 'package:flutter_graphql_sample/widget/components/error_components.dart';
 import 'package:flutter_graphql_sample/widget/components/fruit_row.dart';
 import 'package:flutter_graphql_sample/widget/pages/fruit_edit_page.dart';
+import 'package:flutter_graphql_sample/widget/pages/sign_up_page.dart';
 
 class FruitListPage extends StatefulWidget {
   const FruitListPage({
@@ -27,10 +30,34 @@ class _FruitListPageState extends State<FruitListPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("フルーツ一覧"),
+        actions: [
+          Center(
+            child: InkWell(
+              child: const Padding(
+                padding: EdgeInsets.all(12.0),
+                child: Text('ログアウト'),
+              ),
+              onTap: () {
+                SessionUtils.logout();
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return const SignUpPage();
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       body: FutureBuilder<List<Fruit>>(
         future: _future,
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return buildErrorScaffold(snapshot.error!);
+          }
+
           if (!snapshot.hasData ||
               snapshot.connectionState != ConnectionState.done) {
             return const Center(

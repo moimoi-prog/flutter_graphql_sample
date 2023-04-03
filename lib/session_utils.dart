@@ -29,6 +29,13 @@ class SessionUtils {
     );
   }
 
+  // tokenを更新
+  static Future<void> _resetToken() async {
+    await storage.delete(key: tokenKey);
+    await storage.delete(key: refreshTokenKey);
+    await storage.delete(key: refreshExpiresInKey);
+  }
+
   // tokenの有効期限をチェックし、最新のtokenを返却する
   static Future<String?> checkToken() async {
     final String currentToken = (await storage.read(key: tokenKey))!;
@@ -140,6 +147,16 @@ class SessionUtils {
       }
 
       return tokenAuthResponse.success;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  static Future<bool> logout() async {
+    try {
+      _resetToken();
+
+      return true;
     } catch (e) {
       throw Exception(e);
     }

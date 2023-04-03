@@ -50,12 +50,13 @@ class GraphQLResponse<T> {
         success: false,
         exceptions: event.graphqlErrors,
       );
+    } else {
+      response = GraphQLResponse<T>(
+        success: true,
+        data: event.data,
+      );
     }
 
-    response = GraphQLResponse<T>(
-      success: true,
-      data: event.data,
-    );
     return response;
   }
 }
@@ -127,9 +128,12 @@ class GraphQlAPIClient {
   }
 
   Future<GraphQLResponse<TData>> _future<TData, TVars>(
-    OperationRequest<TData, TVars> request,
-  ) async {
-    return _client
+    OperationRequest<TData, TVars> request, {
+    bool auth = true,
+  }) async {
+    final client = auth ? _authClient : _client;
+
+    return client
         .request(request)
         .firstWhere((element) => element.dataSource == DataSource.Link)
         .then((event) {
@@ -157,7 +161,10 @@ class GraphQlAPIClient {
           ..fetchPolicy = FetchPolicy.NoCache,
       );
 
-      final result = await _future(request);
+      final result = await _future(
+        request,
+        auth: false,
+      );
 
       return result;
     } catch (e) {
@@ -178,7 +185,10 @@ class GraphQlAPIClient {
           ..fetchPolicy = FetchPolicy.NoCache,
       );
 
-      final result = await _future(request);
+      final result = await _future(
+        request,
+        auth: false,
+      );
 
       return result;
     } catch (e) {
@@ -197,7 +207,10 @@ class GraphQlAPIClient {
           ..fetchPolicy = FetchPolicy.NoCache,
       );
 
-      final result = await _future(request);
+      final result = await _future(
+        request,
+        auth: false,
+      );
 
       return result;
     } catch (e) {
@@ -216,7 +229,10 @@ class GraphQlAPIClient {
           ..fetchPolicy = FetchPolicy.NoCache,
       );
 
-      final result = await _future(request);
+      final result = await _future(
+        request,
+        auth: false,
+      );
 
       return result;
     } catch (e) {

@@ -20,8 +20,8 @@ class _SignInPageState extends State<SignInPage> {
   @override
   void initState() {
     super.initState();
-    _usernameController = TextEditingController();
-    _passwordController = TextEditingController();
+    _usernameController = TextEditingController(text: "admin");
+    _passwordController = TextEditingController(text: "admin");
   }
 
   @override
