@@ -129,9 +129,9 @@ class GraphQlAPIClient {
   Future<GraphQLResponse<TData>> _future<TData, TVars>(
     OperationRequest<TData, TVars> request,
   ) async {
-    return _authClient
+    return _client
         .request(request)
-        .firstWhere((element) => !element.loading)
+        .firstWhere((element) => element.dataSource == DataSource.Link)
         .then((event) {
       final GraphQLResponse<TData> result =
           GraphQLResponse<TData>.create(event);
