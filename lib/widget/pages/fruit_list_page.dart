@@ -27,15 +27,12 @@ class _FruitListPageState extends State<FruitListPage> with RouteAware {
 
   @override
   void didChangeDependencies() {
-    // 遷移時に呼ばれる関数
-    // routeObserverに自身を設定
     super.didChangeDependencies();
     routeObserver.subscribe(this, ModalRoute.of(context)!);
   }
 
   @override
   void dispose() {
-    // routeObserverから自身を外す
     routeObserver.unsubscribe(this);
     super.dispose();
   }
@@ -46,7 +43,6 @@ class _FruitListPageState extends State<FruitListPage> with RouteAware {
       return;
     }
 
-    // 最新の情報に更新
     setState(() {
       _future = client.allFruits();
     });
@@ -92,7 +88,7 @@ class _FruitListPageState extends State<FruitListPage> with RouteAware {
             );
           }
 
-          if (snapshot.data == null) {
+          if (snapshot.data!.isEmpty) {
             return const Center(
               child: Text('フルーツが登録されていません'),
             );

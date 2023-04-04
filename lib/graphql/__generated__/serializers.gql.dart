@@ -29,6 +29,15 @@ import 'package:flutter_graphql_sample/graphql/__generated__/create_user.req.gql
     show GCreateUserReq;
 import 'package:flutter_graphql_sample/graphql/__generated__/create_user.var.gql.dart'
     show GCreateUserVars;
+import 'package:flutter_graphql_sample/graphql/__generated__/delete_fruit.data.gql.dart'
+    show
+        GDeleteFruitData,
+        GDeleteFruitData_deleteFruit,
+        GDeleteFruitData_deleteFruit_fruit;
+import 'package:flutter_graphql_sample/graphql/__generated__/delete_fruit.req.gql.dart'
+    show GDeleteFruitReq;
+import 'package:flutter_graphql_sample/graphql/__generated__/delete_fruit.var.gql.dart'
+    show GDeleteFruitVars;
 import 'package:flutter_graphql_sample/graphql/__generated__/refresh_token.data.gql.dart'
     show GRefreshTokenData, GRefreshTokenData_refreshToken;
 import 'package:flutter_graphql_sample/graphql/__generated__/refresh_token.req.gql.dart'
@@ -88,6 +97,11 @@ final SerializersBuilder _serializersBuilder = _$serializers.toBuilder()
   GCreateUserReq,
   GCreateUserVars,
   GDateTime,
+  GDeleteFruitData,
+  GDeleteFruitData_deleteFruit,
+  GDeleteFruitData_deleteFruit_fruit,
+  GDeleteFruitReq,
+  GDeleteFruitVars,
   GGenericScalar,
   GRefreshTokenData,
   GRefreshTokenData_refreshToken,

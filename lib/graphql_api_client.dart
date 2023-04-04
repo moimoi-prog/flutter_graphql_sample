@@ -11,6 +11,7 @@ import 'package:flutter_graphql_sample/graphql/__generated__/all_fruits.req.gql.
 import 'package:flutter_graphql_sample/graphql/__generated__/create_fruit.req.gql.dart';
 import 'package:flutter_graphql_sample/graphql/__generated__/create_user.data.gql.dart';
 import 'package:flutter_graphql_sample/graphql/__generated__/create_user.req.gql.dart';
+import 'package:flutter_graphql_sample/graphql/__generated__/delete_fruit.req.gql.dart';
 import 'package:flutter_graphql_sample/graphql/__generated__/refresh_token.data.gql.dart';
 import 'package:flutter_graphql_sample/graphql/__generated__/refresh_token.req.gql.dart';
 import 'package:flutter_graphql_sample/graphql/__generated__/revoke_token.data.gql.dart';
@@ -316,7 +317,27 @@ class GraphQlAPIClient {
         color: result.data?.updateFruit?.fruit?.color ?? "",
       );
     } catch (e) {
-      throw Exception(e);
+      rethrow;
+    }
+  }
+
+  Future<bool> deleteFruit({
+    required String id,
+  }) async {
+    try {
+      final request = GDeleteFruitReq(
+        (b) => b..vars.id = id,
+      );
+
+      final result = await _future(request);
+
+      if (!result.success) {
+        throw Exception(result.exceptions);
+      }
+
+      return true;
+    } catch (e) {
+      rethrow;
     }
   }
 }
