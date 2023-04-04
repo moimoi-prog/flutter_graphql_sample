@@ -115,15 +115,7 @@ class _FruitListPageState extends State<FruitListPage> with RouteAware {
                 return const FruitEditPage();
               },
             ),
-          ).then((value) {
-            if (!mounted) {
-              return;
-            }
-
-            // setState(() {
-            //   _future = client.allFruits();
-            // });
-          });
+          );
         },
       ),
     );

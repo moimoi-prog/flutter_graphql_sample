@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_graphql_sample/data/fruit.dart';
+import 'package:flutter_graphql_sample/main.dart';
 import 'package:flutter_graphql_sample/widget/components/form_text_field.dart';
 import 'package:flutter_graphql_sample/widget/pages/fruit_edit_page.dart';
 
@@ -30,12 +31,40 @@ class _FruitDetailPageState extends State<FruitDetailPage> {
     });
   }
 
+  Future<bool> _delete() async {
+    try {
+      final result = await client.deleteFruit(
+        id: widget.fruit.id,
+      );
+
+      return result;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("フルーツ詳細"),
         actions: [
+          Center(
+            child: InkWell(
+              child: const Padding(
+                padding: EdgeInsets.all(12.0),
+                child: Text('削除'),
+              ),
+              onTap: () async {
+                final bool result = await _delete();
+
+                if (result) {
+                  // ignore: use_build_context_synchronously
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+          ),
           Center(
             child: InkWell(
               child: const Padding(
